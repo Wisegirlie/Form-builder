@@ -28,3 +28,30 @@
     width: 40px;
     margin: 8px 7px;   
 }
+
+.icon {
+    display: inline-block;
+    position: relative;
+    margin-left: 2px;
+}
+
+.tooltip {
+    visibility: hidden;
+    background-color: #005887;
+    color: white;
+    text-align: center;
+    padding: 3px 6px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: -8px; /* Position above the icon */
+    left: 50%;
+    transform: translateX(-50%);    
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+ .icon:hover .tooltip {
+    visibility: visible;
+  }

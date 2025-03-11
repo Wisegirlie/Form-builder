@@ -15,9 +15,23 @@ export default function Header() {
                 Form Builder
             </div>  
             <div className="header_menu">
-                <img src={SaveFile} alt="Save form" className='icon_menu'/>
+                {/* --- SAVE FILE ----- */}
+                <div className="icon" id="save-icon">
+                    <img src={SaveFile} alt="Save form" className='icon_menu'/>
+                    <span class="tooltip">Save form</span>
+                </div>
+                
+                {/* --- LOAD FILE ----- */}
+                <div className="icon" id="load-icon">
                 <img src={OpenFile} alt="Load form" className='icon_menu'/>
-                <img src={Restart} alt="Reset form" className='icon_menu' onClick={handleReset}/>
+                    <span class="tooltip">Load form</span>
+                </div>
+
+                {/* --- RESET FORM ----- */}
+                <div className="icon" id="reset-icon">
+                    <img src={Restart} alt="Reset form"   className='icon_menu' style={{width: '35px', marginBottom: '9px'}} onClick={handleReset}/>
+                    <span class="tooltip">Restart form</span>
+                </div>
             </div>         
 
         </header>

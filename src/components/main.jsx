@@ -12,17 +12,24 @@ export default function Main() {
     
     // Function to handle dragging of the element
         const drag = (ev) => {
-            ev.dataTransfer.setData("text", ev.target.id); 
-            // Store the id of the dragged element
+            ev.dataTransfer.setData("text", ev.target.id); // Store the id of the dragged element
+            const clonedElement = ev.target.cloneNode(true);  // Clone the dragged element
+            // Optional: Assign a unique ID to avoid conflicts
+            clonedElement.id = `${ev.target.id}-clone-${Date.now()}`;
+            ev.dataTransfer.setData("text/html", clonedElement.outerHTML);
         };
 
     // Function to handle dropping the element
         const drop = (ev) => {
             ev.preventDefault(); // Prevent default behavior
-            const data = ev.dataTransfer.getData("text"); // Get the data (the id)
-            const element = document.getElementById(data); // Get the dragged element by id
             const form_custom = document.getElementById("form_custom");
-            form_custom.appendChild(element); // Append the dragged element to the drop zone
+            const data = ev.dataTransfer.getData("text/html");  // Get the cloned element's HTML
+            // Create a new div and insert the cloned element
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = data;
+            const newElement = wrapper.firstChild;
+            
+            form_custom.appendChild(newElement); // Append the dragged element to the drop zone
             setIsDropped(true);
         };
 

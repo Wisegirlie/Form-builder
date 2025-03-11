@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box; 
+  margin: 0;
+  padding: 0;
+  font-family:'Open Sans', 'Segoe UI', sans-serif;
+}
+
+.App-container {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;       /* cross axis */
+  justify-content:flex-start;   /* main axis */
+  font-size: calc(10px + 2vmin);
+  color: white;
+  text-align: center;  
+}
+
+.App-link {
+  color: #61dafb;
+}

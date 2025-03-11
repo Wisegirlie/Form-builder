@@ -1,0 +1,30 @@
+/* ================================== */
+/* ------------- HEADER ------------- */
+/* ================================== */
+
+.header_container {
+    width: 100%;
+    height: 80px;
+    /* background-color: rgb(235, 211, 27); */  
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.header_title { 
+    display: block;    
+    font-size: 36px;
+    color: #85ffff;
+    font-weight: 600;
+    text-align: left;    
+    margin-left: 10px;
+}
+
+.header_menu {
+    margin-right: 30px;
+}
+
+.icon_menu {
+    width: 40px;
+    margin: 8px 7px;   
+}

@@ -4,82 +4,79 @@ import '../css/main.css';
 export default function Main() {
 
     const [isDropped, setIsDropped] = useState(false); 
-    const [formFields, setFormFields] = useState([]); // State to store form fields
+    const [formFields, setFormFields] = useState([]); // State to store custom form fields
      
     // Function to allow dropping
     const allowDrop = (ev) => {
         ev.preventDefault(); // Allow drop
     };
     
-    // Function to handle dragging of the element --- CLONE 
-    const drag = (ev) => {
-        console.log("drag - " + ev.target.id);
-        ev.dataTransfer.setData("text", ev.target.id); // Store the id of the dragged element
-        // const clonedElement = ev.target.cloneNode(true);  // Clone the dragged element
-        // Optional: Assign a unique ID to avoid conflicts
-        // clonedElement.id = `${ev.target.id}-clone-${Date.now()}`;
-        // ev.dataTransfer.setData("text/html", clonedElement.outerHTML);
-        
-        // Finds input type
-        const inputField = ev.target.querySelector("input"); // Find the input field inside the dragged div
-        if (inputField) {
-            ev.dataTransfer.setData("type", inputField.type); // Store the input's type attribute
-        } else {
-            const textAreaField = ev.target.querySelector("textarea"); // Find the input field inside the dragged div
-            if (textAreaField) {
-                ev.dataTransfer.setData("type", "textarea"); // Store the input's type attribute
-            } else {
-                ev.dataTransfer.setData("type", "unknown"); // Default value if no input is found
-            }
-        }
-    };
-
     // Function to handle dragging of the element
-    const move = (ev) => {
-        ev.dataTransfer.setData("text", ev.target.id); // Store the id of the dragged element 
-        console.log("move - " + ev.target.id);  
+    const drag = (ev) => {                
+        const fieldId = ev.target.id; // Get the ID of the dragged field
+        ev.dataTransfer.setData("text", fieldId); // Pass the ID        
+        console.log("drag - " + ev.target.id);
+        // Finds input type
+        const inputField = ev.target.querySelector("input"); 
+        if (inputField) {
+          ev.dataTransfer.setData("type", inputField.type); 
+        } else {
+          const textAreaField = ev.target.querySelector("textarea"); 
+          if (textAreaField) {
+            ev.dataTransfer.setData("type", "textarea"); 
+          } else {
+            const dropdownField = ev.target.querySelector("select"); 
+            if (dropdownField) {
+              ev.dataTransfer.setData("type", "dropdown");
+            } else {
+                const buttonField = ev.target.querySelector("button"); 
+                if (buttonField.type === "submit") {
+                  ev.dataTransfer.setData("type", "submit"); 
+                } else {
+                    if (buttonField.type === "reset") {
+                        ev.dataTransfer.setData("type", "cancel"); 
+                      } else {
+                            ev.dataTransfer.setData("type", "unknown"); 
+                      }
+                }    
+            }            
+          }
+        }   
     };
 
-    // Function to handle dropping the element
+     // Function to handle dropping the element on the left
     const drop = (ev) => {
-        ev.preventDefault(); // Prevent default behavior
-        // const form_custom = document.getElementById("form_custom");
-        // const data = ev.dataTransfer.getData("text/html"); // Get the cloned element's HTML
-        // // Create a new div and insert the cloned element
-        // const wrapper = document.createElement("div");
-        // wrapper.innerHTML = data;
-        // const newElement = wrapper.firstChild;    
-        // // form_custom.appendChild(newElement); // Append the dragged element to the drop zone
-        // setIsDropped(true);
-
+        ev.preventDefault(); 
         const fieldType = ev.dataTransfer.getData("type");  // Get the field type
-        console.log(`FieldType = ${fieldType}`);
+        // console.log(`FieldType = ${fieldType}`); // debugging
+        const randomId = Math.floor(10000 + Math.random() * 90000);                
         if (fieldType !== "unknown") {
-            const newField = { id: `${fieldType}`, type: fieldType }; // Create a new field object
+            const newField = { id: `${randomId}`, type: fieldType }; // Create a new field object
             setFormFields([...formFields, newField]); // Add the new field to the state
             setIsDropped(true);
         }
     };
 
+    // Function to handle dropping the element on the right - deletes the element
     const drop_right = (ev) => {
-        // ev.preventDefault(); // Prevent default behavior
-        // const data = ev.dataTransfer.getData("text"); // Get the data (the id)
-        // const element = document.getElementById(data); // Get the dragged element by id            
-        // const form_custom = document.getElementById("form_right");
-        // form_custom.appendChild(element); // Append the dragged element to the drop zone
-        // setIsDropped(true);            
         ev.preventDefault();
         const fieldId = ev.dataTransfer.getData("text"); // Get the field ID
-        setFormFields(formFields.filter(field => field.id !== fieldId)); // Remove the field from the state
+        // console.log(`Dropping right: ${fieldId}`); // debugging
+        setFormFields((prevFields) => {
+            // console.log("Dropping fieldId:", fieldId); // debugging        
+            // Log the current ids of the fields in prevFields to see if they match // debugging
+            // prevFields.forEach(field => {
+            //     console.log("Current field id:", field.id); // debugging
+            // });
+    
+            // Remove corresponding field
+            const updatedFields = prevFields.filter((field) => field.id !== fieldId);
+            // console.log("Updated fields after filtering:", updatedFields); // debugging    
+            return updatedFields;
+        });
         
-    };
-
-    // Function to dynamically set the correct drag handler based on the pane
-    const setDragHandler = (ev) => {
-        if (ev.target.closest('.main_block1').id === 'form_right') {
-            return move(ev); // Return the move handler
-        } else {
-            return drag(ev); // Return the drag handler
+        if (formFields.length === 1) {
+            setIsDropped(false);  // show message if no fields
         }
     };
 
@@ -102,9 +99,10 @@ export default function Main() {
         { id: 'cancel-field', type: 'cancel' },
     ];
 
+    // Creates the INPUT type fields - used by renderField() function.
     function createInputField(typeOfField, idNum, placeHolderText) {
         return (
-            <div key={`${typeOfField}-Field-${idNum}`} id={`${typeOfField}-Field-${idNum}`} draggable="true" onDragStart={setDragHandler}>                                            
+            <div key={`${idNum}`} id={`${idNum}`} draggable="true" onDragStart={drag}>                                            
                 <label htmlFor={`${typeOfField}-input-${idNum}`}>{typeOfField.charAt(0).toUpperCase() + typeOfField.slice(1)} Input</label>
                 <input
                     type={typeOfField}
@@ -116,9 +114,8 @@ export default function Main() {
         );
     }
 
-    // Helper function to render fields based on type
-    const renderField = (type) => {
-        const randomId = Math.floor(10000 + Math.random() * 90000);        
+    // function to render fields based on type
+    const renderField = (type, randomId) => {        
         switch (type) {
             case 'text':
                 return createInputField("text", randomId, "Enter Text");
@@ -129,30 +126,12 @@ export default function Main() {
             case 'number':
                 return createInputField("number", randomId, "Enter a number");
             case 'date':
-                return (
-                    <div key={`date-field-${randomId}`} id={`date-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
-                        <label htmlFor={`date-input-${randomId}`}>Date Input</label>
-                        <input
-                            type="date"
-                            id={`date-input-${randomId}`}
-                            name={`date-input-${randomId}`}
-                        />
-                    </div>
-                );
+                return createInputField("date", randomId, "");
             case 'time':
-                return (
-                    <div key={`time-field-${randomId}`} id={`time-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
-                        <label htmlFor={`time-input-${randomId}`}>Time Input</label>
-                        <input
-                            type="time"
-                            id={`time-input-${randomId}`}
-                            name={`time-input-${randomId}`}
-                        />
-                    </div>
-                );
+                return createInputField("time", randomId, "");
             case 'range':
                 return (
-                    <div key={`range-field-${randomId}`} id={`range-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
+                    <div key={`${randomId}`} id={`${randomId}`} draggable="true" onDragStart={drag}>   
                         <label htmlFor={`range-input-${randomId}`}>Range Input</label>
                         <input
                             type="range"
@@ -164,19 +143,10 @@ export default function Main() {
                     </div>
                 );
             case 'color':
-                return (
-                    <div key={`color-field-${randomId}`} id={`color-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
-                        <label htmlFor={`color-input-${randomId}`}>Color Input</label>
-                        <input
-                            type="color"
-                            id={`color-input-${randomId}`}
-                            name={`color-input-${randomId}`}
-                        />
-                    </div>
-                );
+                return createInputField("color", randomId, "");
             case 'radio':
                 return (
-                    <div key={`radio-field-${randomId}`} id={`radio-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
+                    <div key={`${randomId}`} id={`${randomId}`} draggable="true" onDragStart={drag}>   
                         <label>Choose an option</label>
                         <br />
                         <label htmlFor={`radio1-${randomId}`}>Option 1</label>
@@ -205,19 +175,10 @@ export default function Main() {
                     </div>
                 );
             case 'checkbox':
-                return (
-                    <div key={`checkbox-field-${randomId}`} id={`checkbox-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
-                        <label htmlFor={`checkbox-${randomId}`}>Checkbox</label>
-                        <input
-                            type="checkbox"
-                            id={`checkbox-${randomId}`}
-                            name={`checkbox-${randomId}`}
-                        />
-                    </div>
-                );
+                return createInputField("Checkbox", randomId, "");
             case 'dropdown':
                 return (                    
-                    <div key={`dropdown-field-${randomId}`} id={`dropdown-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
+                    <div key={`${randomId}`} id={`${randomId}`} draggable="true" onDragStart={drag}>   
                         {/* Select Dropdown */}
                         <label htmlFor={`select-dropdown-${randomId}`}>Select an option</label>
                         <select
@@ -231,19 +192,10 @@ export default function Main() {
                         </div>
                 );
             case 'file':
-                return (
-                    <div key={`file-field-${randomId}`} id={`file-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
-                        <label htmlFor={`file-input-${randomId}`}>Choose a file</label>
-                        <input
-                            type="file"
-                            id={`file-input-${randomId}`}
-                            name={`file-input-${randomId}`}
-                        />
-                    </div>
-                );
+                return createInputField("file", randomId, "");
             case 'textarea':
                 return (
-                    <div key={`textarea-field-${randomId}`} id={`textarea-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
+                    <div key={`${randomId}`} id={`${randomId}`} draggable="true" onDragStart={drag}>   
                         <label htmlFor={`textarea-${randomId}`}>Comments</label>
                         <textarea
                             id={`textarea-${randomId}`}
@@ -256,7 +208,7 @@ export default function Main() {
                 );
             case 'submit':
                 return (
-                    <div key={`submit-field-${randomId}`} id={`submit-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
+                    <div key={`${randomId}`} id={`${randomId}`} draggable="true" onDragStart={drag}>   
                     <button type="submit" className="button_submit" id={`submit-button-${randomId}`}>
                         Submit
                     </button>
@@ -264,7 +216,7 @@ export default function Main() {
                 );
             case 'cancel':
                 return (
-                    <div key={`reset-field-${randomId}`} id={`reset-field-${randomId}`} draggable="true" onDragStart={setDragHandler}>   
+                    <div key={`${randomId}`} id={`${randomId}`} draggable="true" onDragStart={drag}>   
                     <button type="reset" className="button_submit" id={`cancel-button-${randomId}`}>
                         Reset Form
                     </button>
@@ -289,16 +241,14 @@ export default function Main() {
                 </div>
                            
                 <div className="form_custom">
-                    <div className="form_custom" id="form_custom">  {/* convertir a form si hace falta*/}  
+                    <div className="form_custom" id="form_custom">  {/* convert to <form> when needed */}  
                         {!isDropped && (
                             <div className="form_custom_comment">
                             {'< Drag your fields here >'} 
                             </div>                            
                         )}        
                         {formFields.map(field => (
-                        <div key={field.id} id={field.id} draggable="true" onDragStart={drag}>
-                            {renderField(field.type)} {/* Render the field based on its type */}
-                        </div>
+                            renderField(field.type, field.id)
                         ))}                
                     </div> 
                 </div>   
@@ -312,177 +262,14 @@ export default function Main() {
                 </div>                
 
                 <div>
-                    <div className="custom-form" id='form_right'>  {/* convertir a form si hace falta*/}                     
+                    <div className="custom-form" id='form_right'>  {/* convert to <form> when needed */}                     
 
-                    {fields.map(field => (
-                        // <div key={field.id} id={field.id} draggable="true" onDragStart={drag}>
-                            renderField(field.type)
-                        // </div>
-                    ))}
-
-
-                        <div id='text-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Text Input */}
-                            <label htmlFor="text-input">Text Input</label>
-                            <input type="text" id="text-input" name="text-input" placeholder="Enter text" />
-                            <br />
-                        </div>
-                        
-                        <div id='email-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Email Input */}
-                            <label htmlFor="email-input">Email</label>
-                            <input type="email" id="email-input" name="email-input" placeholder="Enter your email" />
-                            <br />
-                        </div>
-
-                        <div id='password-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Password Input */}
-                            <label htmlFor="password-input">Password</label>
-                            <input type="password" id="password-input" name="password-input" placeholder="Enter password" />
-                        </div>
-
-                        <div id='number-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Number Input */}
-                            <label htmlFor="number-input">Number Input</label>
-                            <input type="number" id="number-input" name="number-input" placeholder="Enter a number" />
-                            <br />
-                        </div>
-
-                        <div id='date-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Date Input */}
-                            <label htmlFor="date-input">Date Input</label>
-                            <input type="date" id="date-input" name="date-input" />
-                            <br />
-                        </div>
-
-                        <div id='time-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Time Input */}
-                            <label htmlFor="time-input">Time Input</label>
-                            <input type="time" id="time-input" name="time-input" />
-                            <br />
-                        </div>
-
-                        <div id='range-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Range Input */}
-                            <label htmlFor="range-input">Range Input</label>
-                            <input type="range" id="range-input" name="range-input" min="1" max="100" />
-                            <br />
-                        </div>
-
-                        <div id='color-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Color Input */}
-                            <label htmlFor="color-input">Color Input</label>
-                            <input type="color" id="color-input" name="color-input" />
-                            <br />
-                        </div>
-
-                        <div id='radio-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Radio Buttons */}
-                            <label>Choose an option</label>
-                            <br />
-                            <label htmlFor="radio1">Option 1</label>
-                            <input type="radio" id="radio1" name="radio-option" value="option1" />
-                            <br />
-                            <label htmlFor="radio2">Option 2</label>
-                            <input type="radio" id="radio2" name="radio-option" value="option2" />                            
-                            <br />
-                            <label htmlFor="radio3">Option 3</label>
-                            <input type="radio" id="radio3" name="radio-option" value="option3" />                            
-                        </div>
-
-                        <div id='checkbox-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Checkbox */}
-                            <label htmlFor="checkbox">Checkbox</label>
-                            <input type="checkbox" id="checkbox" name="checkbox" />                            
-                        </div>
-
-                        <div id='dropdown-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Select Dropdown */}
-                            <label htmlFor="select-dropdown">Select an option</label>
-                            <select id="select-dropdown" name="select-dropdown">
-                                <option value="option1">Option 1</option>
-                                <option value="option2">Option 2</option>
-                                <option value="option3">Option 3</option>
-                            </select>
-                            <br />
-                        </div>
-
-                        <div id='file-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* File Input */}
-                            <label htmlFor="file-input">Choose a file</label>
-                            <input type="file" id="file-input" name="file-input" />
-                            <br />
-                        </div>
-
-                        <div id='textarea-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Textarea */}
-                            <label htmlFor="textarea">Comments</label>
-                            <textarea id="textarea" name="textarea" rows="4" cols="50" placeholder="Enter your comments here"></textarea>
-                            <br />
-                        </div>
-
-                        <div id='submit-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Submit Button */}
-                            <button type="submit" className='button_submit'>
-                                Submit
-                            </button>
-                        </div>
-
-                        <div id='cancel-field'
-                        draggable="true" 
-                        onDragStart={setDragHandler}
-                        >
-                            {/* Cancel Button */}
-                            <button type="reset" className='button_submit'>
-                                Reset Form
-                            </button>
-                        </div>
+                        {fields.map(field => (
+                            renderField(field.type, field.id)
+                        ))}
                     </div>                    
                 </div>
            </div>
-
         </div>
     );
   }

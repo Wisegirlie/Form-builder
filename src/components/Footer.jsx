@@ -6,7 +6,7 @@ export default function Footer() {
     return (
         <footer className='footer_container'>
             <div className='footer_copy'>
-                Copyright 2025 &copy; Gabriela Waisman - All rights reserved
+                Form Builder v1.0 &copy; 2025 :: Gabriela Waisman
             </div>
         </footer>
     );

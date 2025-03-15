@@ -1,10 +1,6 @@
-import { useState } from 'react';
 import '../css/main.css';
 
-export default function Main() {
-
-    const [isDropped, setIsDropped] = useState(false); 
-    const [formFields, setFormFields] = useState([]); // State to store custom form fields
+export default function Main({ formFields, setFormFields, isDropped, setIsDropped }) {    
      
     // Function to allow dropping
     const allowDrop = (ev) => {
@@ -34,7 +30,7 @@ export default function Main() {
                   ev.dataTransfer.setData("type", "submit"); 
                 } else {
                     if (buttonField.type === "reset") {
-                        ev.dataTransfer.setData("type", "cancel"); 
+                        ev.dataTransfer.setData("type", "reset"); 
                       } else {
                             ev.dataTransfer.setData("type", "unknown"); 
                       }
@@ -96,7 +92,7 @@ export default function Main() {
         { id: 'file-field', type: 'file' },
         { id: 'textarea-field', type: 'textarea' },
         { id: 'submit-field', type: 'submit' },
-        { id: 'cancel-field', type: 'cancel' },
+        { id: 'reset-field', type: 'reset' },
     ];
 
     // Creates the INPUT type fields - used by renderField() function.
@@ -214,10 +210,10 @@ export default function Main() {
                     </button>
                     </div>
                 );
-            case 'cancel':
+            case 'reset':
                 return (
                     <div key={`${randomId}`} id={`${randomId}`} draggable="true" onDragStart={drag}>   
-                    <button type="reset" className="button_submit" id={`cancel-button-${randomId}`}>
+                    <button type="reset" className="button_submit" id={`reset-button-${randomId}`}>
                         Reset Form
                     </button>
                     </div>

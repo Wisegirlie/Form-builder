@@ -55,3 +55,19 @@
  .icon:hover .tooltip {
     visibility: visible;
   }
+
+  .tooltip-format {
+    background-color: #005887;
+    color: white;
+    text-align: center;
+    padding: 0px 1px;
+    border-radius: 2px;
+    position: absolute;
+    bottom: git0px; 
+    left: 50%;
+    transform: translateX(-50%);    
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    font-size: 10px;
+    font-weight: bold;
+  }

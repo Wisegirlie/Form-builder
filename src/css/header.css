@@ -63,7 +63,7 @@
     padding: 0px 1px;
     border-radius: 2px;
     position: absolute;
-    bottom: git0px; 
+    bottom: 1px; 
     left: 50%;
     transform: translateX(-50%);    
     transition: opacity 0.3s;

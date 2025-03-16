@@ -1,46 +1,76 @@
 import '../css/header.css';
-import SaveFile from '../assets/save-file.png'
-import OpenFile from '../assets/open-folder.png'
-import Restart from '../assets/refresh-arrow.png'
+import SaveFile from '../assets/save-file.png';
+import OpenFile from '../assets/open-folder.png';
+import Restart from '../assets/refresh-arrow.png';
+import Dialog from './dialog.jsx';
+import { useState } from 'react';
 
 export default function Header({ formFields, setFormFields, isDropped, setIsDropped }) {
+
+    // Status Pop-up variables
+    const [showDialog, setShowDialog] = useState(false);
+    const [dialogTitle, setDialogTitle] = useState(''); 
+    const [dialogMessage, setDialogMessage] = useState(''); 
+    const [isError, setIsError] = useState(false); 
     
+    // Icons' functionalities
     const handleReset = () => {
         window.location.reload();
-      };
+    };
 
-      const saveForm = async () => {
-        const jsonContent = JSON.stringify(formFields, null, 2); // Pretty-print JSON
-        const blob = new Blob([jsonContent], { type: "application/json" });
-    
-        if (window.showSaveFilePicker) {
-            // Use File System API in Chrome, Edge, and Opera
-            try {
-                const handle = await window.showSaveFilePicker({
-                    suggestedName: "custom_form.json",
-                    types: [{ description: "JSON Files", accept: { "application/json": [".json"] } }]
-                });
-    
-                const writable = await handle.createWritable();
-                await writable.write(blob);
-                await writable.close();
-    
-                alert("\nFile saved successfully!");
-            } catch (error) {
-                alert("File save cancelled or failed: \n" + error);
-            }
-        } else {
-            // Fallback for Safari & Firefox: Use Blob + <a> download
-            const filename = prompt("Enter filename:", "custom_form.json");
-            if (!filename) {
-                alert("Filename is empty. \n File not saved.");
-                return;
-            }
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            link.click();
+    const saveForm = async () => {
+      const jsonContent = JSON.stringify(formFields, null, 2); 
+      const blob = new Blob([jsonContent], { type: "application/json" });
+
+      if (window.showSaveFilePicker) {
+        // Use File System API in Chrome, Edge, and Opera
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: "custom_form.json",
+            types: [
+              {
+                description: "JSON Files",
+                accept: { "application/json": [".json"] },
+              },
+            ],
+          });
+
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();          
+          // Show success dialog
+          setDialogTitle("Success");
+          setDialogMessage("File successfully saved.");
+          setIsError(false);
+          setShowDialog(true);
+        } catch (error) {          
+          // Show error dialog
+          setDialogTitle("Error");
+          setDialogMessage(`File save cancelled or failed. \n\n ${error}`);
+          setIsError(true);
+          setShowDialog(true);
         }
+      } else {
+        // Fallback for Safari & Firefox: Use Blob + <a> download
+        const filename = prompt("Enter filename:", "custom_form.json");
+        if (!filename) {          
+          // Show error dialog
+          setDialogTitle("Error");
+          setDialogMessage(`File name is empty. \n File not saved.`);
+          setIsError(true);
+          setShowDialog(true);
+          return;
+        }
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        // Show success dialog
+        setDialogTitle("Success");
+        setDialogMessage("File successfully saved.");
+        setIsError(false);
+        setShowDialog(true);
+      }
     };
 
     const exportForm = async () => {
@@ -57,23 +87,40 @@ export default function Header({ formFields, setFormFields, isDropped, setIsDrop
     
                 const writable = await handle.createWritable();
                 await writable.write(blob);
-                await writable.close();
-    
-                alert("\nFile saved successfully!");
-            } catch (error) {
-                alert("File save cancelled or failed: \n" + error);  
+                await writable.close();                    
+                // Show success dialog
+                setDialogTitle("Success");
+                setDialogMessage("File successfully exported\nin HTML format.");
+                setIsError(false);
+                setShowDialog(true);
+            } catch (error) {                
+                // Show error dialog
+                setDialogTitle("Error");
+                setDialogMessage(`File save cancelled or failed: \n\n ${error}`);
+                setIsError(true);
+                setShowDialog(true);
             }
         } else {
             // Fallback for Safari & Firefox: Use Blob + <a> download
             const filename = prompt("Enter filename:", "custom_form.html");
             if (!filename) {
                 alert("Filename is empty. \n File not saved.");
+                // Show error dialog
+                setDialogTitle("Error");
+                setDialogMessage(`Filename is empty. \n File not saved.`);
+                setIsError(true);
+                setShowDialog(true);
                 return;
             }    
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
             link.download = filename;
             link.click();
+            // Show success dialog
+            setDialogTitle("Success");
+            setDialogMessage("File successfully exported\nin HTML format.");
+            setIsError(false);
+            setShowDialog(true);
         }
     };
 
@@ -88,15 +135,24 @@ export default function Header({ formFields, setFormFields, isDropped, setIsDrop
                 const file = await fileHandle.getFile();
                 const text = await file.text();
                 const parsedData = JSON.parse(text); 
-                setFormFields(parsedData); 
-                if (formFields.length === 1) {
+                setFormFields(parsedData);   
+                console.log(formFields.length);              
+                if (formFields.length === 1 || formFields.length === 0) {
                     setIsDropped(false);  // show message if no fields
                 } else {
                     setIsDropped(true);  
-                }
-                alert("\nFile loaded successfully!");
-            } catch (error) {
-                alert("File load cancelled or failed: \n" + error);
+                }                
+                // Show success dialog
+                setDialogTitle("Success");
+                setDialogMessage("File loaded successfully.");
+                setIsError(false);
+                setShowDialog(true);
+            } catch (error) {                
+                // Show error dialog
+                setDialogTitle("Error");
+                setDialogMessage(`File load cancelled or failed: \n\n ${error}`);
+                setIsError(true);
+                setShowDialog(true);
             }
         } else {
             // Fallback for Safari & Firefox: Use hidden file input
@@ -113,7 +169,11 @@ export default function Header({ formFields, setFormFields, isDropped, setIsDrop
                 reader.onload = (e) => {
                     const parsedData = JSON.parse(e.target.result); 
                     setFormFields(parsedData); 
-                    console.log("File loaded successfully!");
+                    // Show success dialog
+                    setDialogTitle("Success");
+                    setDialogMessage("File loaded successfully.");
+                    setIsError(false);
+                    setShowDialog(true);
                 };
                 reader.readAsText(file);
             });
@@ -125,7 +185,17 @@ export default function Header({ formFields, setFormFields, isDropped, setIsDrop
     };
   
     return (
-        <header className='header_container'>
+        <header className='header_container'>    
+            {/* Render Dialog conditionally */}
+            {showDialog && (
+                <Dialog
+                    title={dialogTitle}
+                    message={dialogMessage}
+                    error={isError}
+                    onClose={() => setShowDialog(false)} 
+                />
+            )}  
+
             <div className="header_title">
                 Form Builder
             </div>  
@@ -156,8 +226,7 @@ export default function Header({ formFields, setFormFields, isDropped, setIsDrop
                     <img src={Restart} alt="Reset form"   className='icon_menu' style={{width: '35px', marginBottom: '9px'}} onClick={handleReset}/>
                     <span className="tooltip">Restart form</span>
                 </div>
-            </div>         
-
+            </div> 
         </header>
     );
   }

@@ -11,7 +11,7 @@ export default function Main({ formFields, setFormFields, isDropped, setIsDroppe
     const drag = (ev) => {                
         const fieldId = ev.target.id; // Get the ID of the dragged field
         ev.dataTransfer.setData("text", fieldId); // Pass the ID        
-        console.log("drag - " + ev.target.id);
+        // console.log("drag - " + ev.target.id);  // debugging
         // Finds input type
         const inputField = ev.target.querySelector("input"); 
         if (inputField) {
@@ -47,8 +47,8 @@ export default function Main({ formFields, setFormFields, isDropped, setIsDroppe
         // console.log(`FieldType = ${fieldType}`); // debugging
         const randomId = Math.floor(10000 + Math.random() * 90000);                
         if (fieldType !== "unknown") {
-            const newField = { id: `${randomId}`, type: fieldType }; // Create a new field object
-            setFormFields([...formFields, newField]); // Add the new field to the state
+            const newField = { id: `${randomId}`, type: fieldType }; 
+            setFormFields([...formFields, newField]); 
             setIsDropped(true);
         }
     };
@@ -58,13 +58,7 @@ export default function Main({ formFields, setFormFields, isDropped, setIsDroppe
         ev.preventDefault();
         const fieldId = ev.dataTransfer.getData("text"); // Get the field ID
         // console.log(`Dropping right: ${fieldId}`); // debugging
-        setFormFields((prevFields) => {
-            // console.log("Dropping fieldId:", fieldId); // debugging        
-            // Log the current ids of the fields in prevFields to see if they match // debugging
-            // prevFields.forEach(field => {
-            //     console.log("Current field id:", field.id); // debugging
-            // });
-    
+        setFormFields((prevFields) => {                
             // Remove corresponding field
             const updatedFields = prevFields.filter((field) => field.id !== fieldId);
             // console.log("Updated fields after filtering:", updatedFields); // debugging    
@@ -237,7 +231,7 @@ export default function Main({ formFields, setFormFields, isDropped, setIsDroppe
                 </div>
                            
                 <div className="form_custom">
-                    <div className="form_custom" id="form_custom">  {/* convert to <form> when needed */}  
+                    <div className="form_custom" id="form_custom">  {/* convert <div> to <form> when needed */}  
                         {!isDropped && (
                             <div className="form_custom_comment">
                             {'< Drag your fields here >'} 
@@ -258,7 +252,7 @@ export default function Main({ formFields, setFormFields, isDropped, setIsDroppe
                 </div>                
 
                 <div>
-                    <div className="custom-form" id='form_right'>  {/* convert to <form> when needed */}                     
+                    <div className="custom-form" id='form_right'>  {/* convert <div> to <form> when needed */}                     
 
                         {fields.map(field => (
                             renderField(field.type, field.id)

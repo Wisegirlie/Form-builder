@@ -1,0 +1,51 @@
+.dialog-container {
+    position: absolute;    
+    width: 350px;        
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -80%);
+    background: #ffffff; /* #3c5077; azul lindo */
+    color: #333;
+    text-align: center;
+    padding: 0 30px 30px;    
+    border-radius: 20px;
+    visibility: visible;
+}
+
+.dialog-innercontainer {
+    
+}
+
+.dialog-icon {
+    width: 80px;
+    margin-top: -40px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dialog-title {
+    font-size: 26px;
+    margin: 30px 0 10px;
+    font-weight: 500;
+}
+
+.dialog-message {
+    font-size: 18px;    
+}
+
+
+.close-button {
+    width: 100%;
+    margin-top: 50px;
+    padding: 10px 0;
+    /* background: #6fd649;  verde lindo */
+    background-color: #007a7a;
+    color: #ffffff;
+    border: 0;
+    outline: none;
+    font-size: 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 5px 6px rgba(0, 0, 0, 0.2);    
+}
+

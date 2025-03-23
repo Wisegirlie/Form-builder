@@ -46,7 +46,8 @@ export default function Header({ formFields, setFormFields, isDropped, setIsDrop
         } catch (error) {          
           // Show error dialog
           setDialogTitle("Error");
-          setDialogMessage(`File save cancelled or failed. \n\n ${error}`);
+          setDialogMessage("File save cancelled or failed.");
+          console.log(`Error saving: ${error}`)  
           setIsError(true);
           setShowDialog(true);
         }
@@ -96,7 +97,8 @@ export default function Header({ formFields, setFormFields, isDropped, setIsDrop
             } catch (error) {                
                 // Show error dialog
                 setDialogTitle("Error");
-                setDialogMessage(`File save cancelled or failed: \n\n ${error}`);
+                setDialogMessage(`File save cancelled or failed.`);
+                console.log(`Error saving: ${error}`)  
                 setIsError(true);
                 setShowDialog(true);
             }
@@ -150,7 +152,8 @@ export default function Header({ formFields, setFormFields, isDropped, setIsDrop
             } catch (error) {                
                 // Show error dialog
                 setDialogTitle("Error");
-                setDialogMessage(`File load cancelled or failed: \n\n ${error}`);
+                setDialogMessage(`File load cancelled or failed.`);
+                console.log(`Error loading: ${error}`)  
                 setIsError(true);
                 setShowDialog(true);
             }

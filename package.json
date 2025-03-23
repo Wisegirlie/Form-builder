@@ -1,5 +1,6 @@
 {
-  "name": "custom-forms",
+  "name": "custom-forms",  
+  "homepage": "/portfolio/form-builder/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

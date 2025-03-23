@@ -23,8 +23,14 @@ You may also see any lint errors in the console.
 
 ## Screenshots
 
+Initial State when you open the app:
+
 ![image](./src/screenshots/Screenshot-01-initial.png)
 
+Building a custom form with drag & drop:
+
 ![image](./src/screenshots/Screenshot-02-building%20a%20form.png)
+
+Saving a file:
 
 ![image](./src/screenshots/Screenshot-03-saving%20file.png)

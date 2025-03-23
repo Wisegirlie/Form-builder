@@ -2,9 +2,13 @@ Form Builder
 ============
 
 This is an app to create custom forms by dragging and dropping fields and exporting them to be used in websites. Created in React.
-Desktop version only for now.
+Desktop version for now.
 
-## How to run the app
+## View app on working site 
+
+[link] (https://gabywaisman.com/portfolio/form-builder/index.html)
+
+## How to run the app locally
 
 Download and open the project folder.
 Run in the command line: 

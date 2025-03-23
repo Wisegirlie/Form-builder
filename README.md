@@ -1,7 +1,7 @@
 Form Builder
 ============
 
-This is an app to create custom HTML forms by dragging and dropping fields and exporting them to be used in your websites code. Created in React.
+This is an app to create custom HTML forms by dragging and dropping fields and exporting them to be used in your websites' code. Created in React.
 Desktop version for now.
 
 ## View app on working site 

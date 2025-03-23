@@ -1,4 +1,5 @@
-# Form Builder
+Form Builder
+============
 
 This is an app to create custom forms by dragging and dropping fields and exporting them to be used in websites. Created in React.
 
